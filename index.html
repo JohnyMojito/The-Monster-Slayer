@@ -42,7 +42,8 @@
         <div class="small-12 columns">
             <ul>
                 <li>
-
+                  <div class="player-turn" v-for="each in myAttack">Damage taken: {{ each }} </div>
+                  <div class="monster-turn" v-for="each in monsterAttack">Damage dealt {{ each }}</div>
                 </li>
             </ul>
         </div>

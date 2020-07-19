@@ -4,10 +4,8 @@ new Vue ({
     showButtons: false,
     myHealth: 100,
     monsterHealth: 100,
-    attacks: {
-      myAttack: [],
-      monsterAttack:
-    }
+    myAttack: [],
+    monsterAttack: []
   },
   computed: {
     playerHealth() {
@@ -43,6 +41,7 @@ new Vue ({
       } 
       monsterDmg = Math.floor(Math.random()*10) +1; 
       this.monsterHealth -= monsterDmg;
+      this.monsterAttack.push(monsterDmg);
       if (this.monsterHealth < 0) {
         this.monsterHealth = 0;
         alert('Congratulations!\nYou won! Play again!')
