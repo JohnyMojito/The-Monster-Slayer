@@ -13,6 +13,7 @@
             <h1 class="text-center">YOU</h1>
             <div class="healthbar">
                 <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" :style="playerHealth">
+                  {{ myHealth }}
                 </div>
             </div>
         </div>
@@ -20,14 +21,14 @@
             <h1 class="text-center">MONSTER</h1>
             <div class="healthbar">
                 <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" :style="enemyHealth">
-
+                  {{ monsterHealth }}
                 </div>
             </div>
         </div>
     </section>
     <section class="row controls">
         <div class="small-12 columns">
-            <button id="start-game" @click="showButtons = !showButtons">START NEW GAME</button>
+            <button id="start-game" @click="startGame">START NEW GAME</button>
         </div>
     </section>
     <section class="row controls" v-show="showButtons">
@@ -38,13 +39,16 @@
             <button id="give-up" @click='giveUp'>GIVE UP</button>
         </div>
     </section>
-    <section class="row log">
-        <div class="small-12 columns">
+    <section class="row log" v-if="showLog">
+        <div class="small-12 columns" >
             <ul>
-                <li>
-                  <div class="player-turn" v-for="each in myAttack">Damage taken: {{ each }} </div>
-                  <div class="monster-turn" v-for="each in monsterAttack">Damage dealt {{ each }}</div>
+              <template v-if="showLog">
+                <li v-for="a in actions">
+                  <div class="player-turn" v-if="attackClicked">You attacked and dealt {{ a.monsterMsg }} points of damage! </div>
+                  <div class="monster-turn">Monster attacked and dealt {{ a.playerMsg }} points of damage!</div>
                 </li>
+              </template>
+      
             </ul>
         </div>
     </section>
