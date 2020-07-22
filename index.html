@@ -8,20 +8,28 @@
 </head>
 <body>
 <div id="app">
-    <section class="row">
+    <section class='row controls' v-if="enterName">
+      <div style="text-align: center;">
+          <h2 class='text-center'>Enter your name:</h1>
+          <input type="text" v-model="playerName">
+      </div>
+    </section>  
+    <section class="row controls" v-else>
         <div class="small-6 columns">
-            <h1 class="text-center">YOU</h1>
+            <h1 class="text-center">{{ playerName }}</h1>
             <div class="healthbar">
-                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" 
-                :style="{width: myHealth +'%'}">
+                <div class="healthbar text-center" 
+                style="margin: 0; color: white; font-weight: bold;" 
+                :style="{'background-color': bgColor, width: myHealth +'%'}" 
+                >
                   {{ myHealth }}
                 </div>
             </div>
         </div>
         <div class="small-6 columns">
-            <h1 class="text-center">MONSTER</h1>
+            <h1 class="text-center">Monster</h1>
             <div class="healthbar">
-                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" 
+                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white; font-weight: bold;" 
                 :style="{width: monsterHealth + '%'}">
                   {{ monsterHealth }}
                 </div>
@@ -38,7 +46,8 @@
             <button id="attack" @click="attack">ATTACK</button>
             <button id="special-attack" @click="specialAttack">SPECIAL ATTACK</button>
             <button id="heal" @click="heal">HEAL</button>
-            <button id="give-up" @click='giveUp'>GIVE UP</button>
+            <button id="restart" @click="restart">RESTART</button>
+            <button id="give-up" @click="giveUp">GIVE UP</button>
         </div>
     </section>
     <section class="row log" v-if="turns.length > 0">
