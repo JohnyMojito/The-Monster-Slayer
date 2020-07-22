@@ -12,7 +12,8 @@
         <div class="small-6 columns">
             <h1 class="text-center">YOU</h1>
             <div class="healthbar">
-                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" :style="playerHealth">
+                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" 
+                :style="{width: myHealth +'%'}">
                   {{ myHealth }}
                 </div>
             </div>
@@ -20,35 +21,33 @@
         <div class="small-6 columns">
             <h1 class="text-center">MONSTER</h1>
             <div class="healthbar">
-                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" :style="enemyHealth">
+                <div class="healthbar text-center" style="background-color: green; margin: 0; color: white;" 
+                :style="{width: monsterHealth + '%'}">
                   {{ monsterHealth }}
                 </div>
             </div>
         </div>
     </section>
-    <section class="row controls">
+    <section class="row controls" v-if="!gameOn">
         <div class="small-12 columns">
             <button id="start-game" @click="startGame">START NEW GAME</button>
         </div>
     </section>
-    <section class="row controls" v-show="showButtons">
+    <section class="row controls" v-else>
         <div class="small-12 columns">
             <button id="attack" @click="attack">ATTACK</button>
-            <button id="special-attack">SPECIAL ATTACK</button>
+            <button id="special-attack" @click="specialAttack">SPECIAL ATTACK</button>
             <button id="heal" @click="heal">HEAL</button>
             <button id="give-up" @click='giveUp'>GIVE UP</button>
         </div>
     </section>
-    <section class="row log" v-if="showLog">
+    <section class="row log" v-if="turns.length > 0">
         <div class="small-12 columns" >
-            <ul>
-              <template v-if="showLog">
-                <li v-for="a in actions">
-                  <div class="player-turn" v-if="attackClicked">You attacked and dealt {{ a.monsterMsg }} points of damage! </div>
-                  <div class="monster-turn">Monster attacked and dealt {{ a.playerMsg }} points of damage!</div>
-                </li>
-              </template>
-      
+            <ul>        
+                <li v-for="turn in turns"
+                :class="{'player-turn': turn.isPlayer, 'monster-turn': !turn.isPlayer}">
+                  {{ turn.text }}
+                </li>    
             </ul>
         </div>
     </section>

@@ -1,113 +1,86 @@
 new Vue ({
   el: "#app",
   data: {
-    showButtons: false,
-    showLog: false,
-    attackClicked: false,
-    healClicked: false,
+    gameOn: false,
     myHealth: 100,
     monsterHealth: 100,
-    myAttack: [],
-    monsterAttack: [],
-    myHeal: []
-  },
-  computed: {
-    actions() {
-      const attack = []
-      for (let i =0, len = Math.max(this.myAttack.length, this.monsterAttack.length, this.myHeal.length); i < len; i++) {
-        attack.push({
-          playerMsg: this.myAttack[i],
-          monsterMsg: this.monsterAttack[i],
-          healMsg: this.myHeal[i]
-        })
-      }
-      return attack
-    },
-    playerHealth() {
-      if (this.myHealth > 100) {
-        return {
-          width: "100%"
-        }
-      } else if (this.myHealth < 0) {
-        return {
-          width: "0%"
-        }
-      } else {
-        return {
-          width: this.myHealth + "%"
-        }
-      }
-     },
-     enemyHealth() {
-       return {
-         width: this.monsterHealth + "%"
-       }
-     }
+    turns: []
   },
   methods: {
     startGame() {
-      this.showButtons = !this.showButtons;
-      if (!this.showButtons == true) {
-        location.reload()
-      }
+     this.gameOn = true;
+     this.myHealth = 100;
+     this.monsterHealth = 100;
+     this.turns = [];
     },
     attack() {
-      this.attackClicked = true;
-      this.showLog = true;
-      dmg = Math.floor(Math.random()*10) + 1;
-      this.myHealth -= dmg;
-      this.myAttack.push(dmg)
-      if (this.myHealth <= 0) {
-        this.myHealth = 0;
-        let alert = confirm('You died!\nTry again?')
-        if (alert == true) {
-          location.reload()
-        }
-      } 
-      monsterDmg = Math.floor(Math.random()*10) +1; 
-      this.monsterHealth -= monsterDmg;
-      this.monsterAttack.push(monsterDmg);
-      if (this.monsterHealth < 0) {
-        this.monsterHealth = 0;
-        let alert = confirm('Congratulations!\nYou won! Play again!')
-        if (alert == true) {
-          location.reload()
-        }
-      } 
-      console.log(this.myHealth)
-      console.log("Damage is: " + dmg)
-      console.log(this.monsterHealth)
-      console.log("Monster damage is: " + monsterDmg)
-      
+      this.playerActions(1, 10, 'attacked')
+    },
+    specialAttack(){
+      this.playerActions(10, 20, 'used a special attack')
     },
     heal() {
-      this.healClicked = true;
-      healing = Math.floor(Math.random()*10) + 1;
+      var healing = this.calculateDmg(5,15);
       this.myHealth += healing;
-      this.myHeal.push(healing)
+      this.turns.unshift({
+        isPlayer: true,
+        text: 'Player healed and regained ' + healing + ' life points!'
+      })
       if (this.myHealth > 100) {
         this.myHealth = 100;
       }  
-
-      console.log('Heal is:' + healing)
-      console.log(this.myHealth)
-      
-      dmg = Math.floor(Math.random()*10) + 1;
-      this.myHealth -= dmg;
-      this.myAttack.push(dmg)
-      if (this.myHealth <= 0) {
-        this.myHealth = 0;
-        console.log('You died! Please try again')
-      } 
-      console.log(this.myHealth)
-      console.log("Damage is: " + dmg)
-      console.log(this.myHeal)
+      this.monsterAttack();
     },
     giveUp() {
-      let alert = confirm('The game will be restarted!\nDo you wish to start a new game?');
-      if (alert == true) {
-        location.reload();
+      if(confirm('The game will be restarted!\nDo you wish to start a new game?')) {
+        this.startGame();
+      } else {
+        this.gameOn = false;
       }
+    },
+    calculateDmg(min, max) {
+      return Math.max(Math.floor(Math.random()*max + 1), min)
+    },
+    monsterAttack() {
+      var dmg = this.calculateDmg(5, 12);
+      this.myHealth -= dmg;
+      this.turns.unshift({
+        isPlayer: false,
+        text: 'Monster attacked and dealt ' + dmg + ' points of damage!'
+      })
+      this.checkWin();
+    },
+    checkWin() {
+      if (this.monsterHealth <= 0){
+        if (confirm('You won! Play again?')){
+          this.startGame()
+        } else {
+          this.gameOn = false;
+        }
+        return true; 
+      } else if (this.myHealth <= 0) {
+        if (confirm('You lost! Try again?')) {
+          this.startGame()
+        } else {
+          this.gameOn = false;
+        }
+        return true;
+      }
+      return false; 
+    },
+    playerActions(min, max, action) {
+      var dmg = this.calculateDmg(min, max)
+      this.monsterHealth -= dmg;
+      this.turns.unshift({
+        isPlayer: true,
+        text: 'Player ' + action + ' and dealt ' + dmg + ' points of damage!'
+      })
+
+      if(this.checkWin()){
+        return;
+      }
+
+      this.monsterAttack()
     }
   }
 })
