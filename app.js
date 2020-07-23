@@ -7,7 +7,8 @@ new Vue ({
     monsterHealth: 100,
     turns: [],
     playerName: '',
-    bgColor: 'green'
+    playerBgColor: 'green',
+    monsterBgColor: 'green'
   },
   methods: {
     startGame() {
@@ -22,7 +23,6 @@ new Vue ({
     heal() {
       var healing = this.calculateDmg(5,15);
       this.myHealth += healing;
-      this.healthActions(this.myHealth);
       this.turns.unshift({
         isPlayer: true,
         text: this.playerName + ' healed and regained ' + healing + ' life points!'
@@ -49,7 +49,13 @@ new Vue ({
     monsterAttack() {
       var dmg = this.calculateDmg(5, 12);
       this.myHealth -= dmg;
-      this.healthActions(this.myHealth);
+      if (this.myHealth <= 100 && this.myHealth > 50) {
+        this.playerBgColor = 'green'
+      } else if (this.myHealth <= 50 && this.myHealth > 25) {
+        this.playerBgColor = 'orange'
+      } else if (this.myHealth <= 25) {
+        this.playerBgColor = 'red'
+      }
       this.turns.unshift({
         isPlayer: false,
         text: 'Monster attacked and dealt ' + dmg + ' points of damage!'
@@ -77,7 +83,13 @@ new Vue ({
     playerActions(min, max, action) {
       var dmg = this.calculateDmg(min, max)
       this.monsterHealth -= dmg;
-      this.healthActions(this.monsterHealth);
+      if (this.monsterHealth <= 100 && this.monsterHealth > 50) {
+        this.monsterBgColor = 'green'
+      } else if (this.monsterHealth <= 50 && this.monsterHealth > 25) {
+        this.monsterBgColor = 'orange'
+      } else if (this.monsterHealth <= 25) {
+        this.monsterBgColor = 'red'
+      }
       this.turns.unshift({
         isPlayer: true,
         text: this.playerName + " " + action + ' and dealt ' + dmg + ' points of damage!'
@@ -98,17 +110,18 @@ new Vue ({
         this.myHealth = 100;
         this.monsterHealth = 100;
         this.turns = [];
-        this.bgColor = 'green';
+        this.playerBgColor = 'green';
+        this.monsterBgColor = 'green';
       }
     },
-    healthActions(healthObj) {
+    /*healthActions(healthObj, bgColor) {
      if (healthObj <= 100 && healthObj > 50) {
-        this.bgColor = 'green'
+        bgColor = 'green'
       } else if (healthObj <= 50 && healthObj > 25) {
-        this.bgColor = 'orange'
+        bgColor = 'orange'
       } else if (healthObj <= 25) {
-        this.bgColor = 'red'
+        bgColor = 'red'
       }
-    }
+    }*/
   }
 })
